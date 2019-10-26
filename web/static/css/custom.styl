@@ -1,0 +1,210 @@
+*{
+  box-sizing:border-box;
+  outline:none;
+}
+html{
+  color:#b9c0ef;
+  font-size:14px;
+  font-family: PingFang SC,Microsoft Yahei,PingFang SC, Verdana, Helvetica Neue, Hiragino Sans GB, Microsoft Sans Serif, WenQuanYi Micro Hei, sans-serif;
+}
+body{
+  margin:0;
+  padding:0;
+  
+ 
+  background-color:#202539
+}
+p{
+  line-height:2.5em;
+}
+button{
+  border:none;
+  border-radius: 3px
+}
+.lg-btn{
+  height:0.76rem;
+  line-height:0.76rem;
+  background-color:#fcfcfc
+  border:1px solid #e2e2e2
+}
+.btnActive{
+  border-radius: 50%;
+  border:6px solid #db9e3f!important;
+}
+.border-right{
+  border-right:3px solid #e9ecee
+  }
+.w100{
+  width:100%;
+  }
+.h100{
+  height:100%
+  }
+.line-height-1{
+  line-height:10px
+}
+.line-height-3{
+  line-height:0.3rem}
+.ql-align-center{
+  text-align:center
+  }
+
+//处理单行文本溢出
+.text-ellipsis{
+  display:inline-block;
+  text-overflow:ellipsis;
+  overflow:hidden;
+  white-space:nowrap
+
+}
+.iconfont{
+  font-size: 0.26rem;
+  margin-right:0.1rem
+  }
+//定义下边框线
+.border-bottom{
+  border-bottom:2px solid #9fa0a0
+}
+.border-bottom-1{
+  border-bottom: 1px solid #d4d9de
+}
+
+//定义颜色工具类
+colors={
+  'dark1':#292e41,
+  'dark2':#33394d,
+   'dark-l1':#383d50,
+   'dark-l2':#7a80a2,
+  'white':#fff,
+  'white-light':#b9c0ef,
+  'white-dark':#b9c0ef,
+  'grey':#dcdcdc,
+  'blue':#508bf3,
+
+  
+  }
+
+
+for name,color in colors{
+  .text-{name}{
+      color:color
+    }
+  .bg-{name}{
+    background-color:color
+    }
+
+}
+//定义字重
+.fwn{
+  font-weight: normal}
+
+//定义文本对齐工具类
+for i in left center right
+  .text-{i}{
+    text-align: i
+    }
+
+//定义字体大小工具类
+base-font-size=1px
+font-size={
+  'xs':12, //
+  '14':14
+  'sm':18,//16px
+  '20':20,
+  'mmd':24,//22px
+  'md':28,//24px
+  'lg':32,   //26px
+  'xl':36,   //28px
+  'xxl':48//32px
+  '50':50//34px
+}
+
+for size-key,size in font-size{
+  .fs-{size-key}{
+    font-size:size*base-font-size;
+    }
+}
+
+//定义flex布局工具类
+.d-flex{
+  display:flex;
+}
+.flex-column{
+  flex-direction:column
+  }
+.flex-1{
+  flex:1
+  }
+.flex-wrap{
+  flex-wrap:wrap
+  }
+flex-jc={
+  'start':flex-start,
+  'end':flex-end,
+  'center':center,
+  'between':space-between,
+  'around':space-around
+}
+for key,value in flex-jc
+  .jc-{key}{
+    justify-content: value;
+    }
+flex-ai={
+  'start':flex-start,
+  'end':flex-end,
+  'center':center,
+  'stretch':stretch
+}
+for key,value in flex-ai
+  .ai-{key}{
+    align-items: value;
+    }
+
+//定义边距工具类
+spacing-types={
+  'm':margin,
+  "p":padding
+}
+spacing-directions={
+  't':top,
+  'r':right,
+  'b':bottom,
+  'l':left
+}
+spacing-base-size=1px;
+spacing-sizes={
+  '0':0,
+  "1":10,
+  '2':15,
+  '3':20,
+  '4':25,
+  '5':30,
+  '6':40,
+  '7':50,
+  '8':60
+}
+
+//三层循环，.m-t-1格式的类，表示margin-top:xx
+//
+for typekey,type in spacing-types{
+  for directionKey,direction in spacing-directions{
+    for sizekey,size in spacing-sizes{
+        .{typekey}-{directionKey}-{sizekey}{
+            {type}-{direction}:size * spacing-base-size;
+      }
+    } 
+  }
+}
+//mx-1，my-1格式的类，表示水平方向的边距
+for typekey, type in spacing-types{
+  for sizekey, size in spacing-sizes{
+    .{typekey}x-{sizekey}{
+      {type}-left: size * spacing-base-size;
+      {type}-right: size * spacing-base-size;
+    }
+     .{typekey}y-{sizekey}{
+      {type}-top: size * spacing-base-size;
+      {type}-bottom: size * spacing-base-size;
+    }
+  }
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>datavslz-demo</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+  <script>
+    async function main() {
+      await Post.insertMany([
+        { title: '第一篇帖子', body: '内容1' },
+        { title: '第二篇帖子', body: '内容2' }
+      ])
+      //设置分类
+      await Category.insertMany([{ name: 'nodeJs' }, { name: 'vuejs' }])
+      //关联查询
+      const cat1 = Category.findOne({ name: 'nodeJs' })
+      const post1 = await Post.findOne({ title: '第一篇帖子' })
+      const post2 = await Post.findOne({ title: '第二篇帖子' })
+      post1.category = cat1._id
+      post2.category = cat1._id
+      await post1.save()
+      await post2.save()
+    }
+    const CategorySchema = new mongoose.Schema(
+      {
+        name: { type: String }
+      },
+      {
+        toJSON: { virtuals: true }
+      }
+    )
+    CategorySchema.virtual('posts', {
+      ref: 'Posts',
+      localField: '_id', //本地键，在分类里用本地键去关联
+      foreignField: 'categories', //外键，posts里被关联的键
+      justOne: false
+    })
+    async function main() {
+      const cats = await Category.find().populate('posts')
+      console.log(JSON.stringify(cats)) //默认是不显示虚拟字段的，设置两处1.Schema2.stringify处理，第二种方法是设置好1后再上面的populate后面加上.lean()表示输出纯粹的json数据
+    }
+  </script>
+  <script>
+    let http = require('http')
+    let ds = require('fs')
+    let server = http.createServer(function(req, res) {
+      fs.readFile('./test.html', function(err, data) {
+        res.writeHead(200, { 'Content-type': 'text/html;charset=UTF-8' })
+        res.end(data)
+      })
+    })
+    server.listen(3000, '127.0.0.1')
+    const express = require('express')
+    const app = express()
+
+    //写一个接口
+    app.get('/user/login', (req, res) => {
+      console.log(req.query)
+      console.log('你好')
+      res.send({ err: 0, msg: 'okok' })
+    })
+    app.listen(3000, () => {
+      console.log('server start')
+    })
+  </script>
+</html>
