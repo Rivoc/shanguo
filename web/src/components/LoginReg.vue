@@ -37,7 +37,7 @@ export default {
         if (i > 1) {
           i = 0.5
         }
-        console.log(i)
+
         _this.$refs.bgMask.classList.remove('transition-500')
         _this.$refs.bgMask.classList.add('transition-100')
         _this.$refs.bgMask.style.background = `rgba(0,0,0,${i})`
