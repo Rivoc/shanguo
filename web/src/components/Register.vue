@@ -10,7 +10,7 @@
       <!-- 用户名 -->
       <el-form-item prop="username">
         <el-input autocomplete="off"
-                  placeholder="用户名/邮箱"
+                  placeholder="手机号/邮箱"
                   v-model="model.username"></el-input>
       </el-form-item>
       <!-- 用户名end -->
@@ -20,7 +20,7 @@
         <el-form-item>
           <el-input autocomplete="off"
                     placeholder="输入验证码"
-                    v-model="model.code">
+                    v-model="model.userCode">
           </el-input>
         </el-form-item>
         <div class="m-t-1 m-l-1"
@@ -34,8 +34,7 @@
 
       <!-- 密码 -->
       <el-form-item prop="password">
-        <el-input type="
-                      password"
+        <el-input type="password"
                   autocomplete="off"
                   placeholder="输入密码"
                   v-model="model.password"></el-input>
@@ -61,19 +60,37 @@ export default {
       var reg = /^[1][3,4,5,7,8][0-9]{9}$/
       var reg2 = /[a-zA-Z0-9]{1,10}@[a-zA-Z0-9]{1,5}\.[a-zA-Z0-9]{1,5}/
       var reg3 = /[a-zA-Z0-9]{1,10}@/
+
       if (value === '') {
         callback(new Error('不能为空'))
       }
+      // 如果字符串里含有@
       if (reg3.test(value)) {
-        if (!reg2.test(value)) {
-          this.model.username = ''
-          callback(new Error('请正确填写邮箱'))
+        switch (reg2.test(value)) {
+          case false:
+            callback(new Error('请正确填写邮箱'))
+            this.model.username = ''
+            break
+          case true:
+            this.phone = ''
+            this.mail = value
+            console.log(typeof this.mail)
+            console.log(this.phone)
+        }
+      } else {
+        switch (reg.test(value)) {
+          case false:
+            this.model.username = ''
+            callback(new Error('请正确填写手机号'))
+            break
+          case true:
+            this.mail = ''
+            this.phone = value
+            console.log(this.mail)
+            console.log(typeof this.phone)
+            break
         }
       }
-      // if (!reg.test(value)) {
-      //   this.model.username = ''
-      //   callback(new Error('请正确填写手机号'))
-      // }
     }
 
     var validatePass = (rule, value, callback) => {
@@ -101,14 +118,15 @@ export default {
     }
     return {
       countDown: 60,
+      // 用户输入的手机号或邮箱
+      phone: '',
       mail: '',
       model: {
         password: '',
         checkPass: '',
         username: '',
         codeSend: false,
-        //用户输入的验证码
-        code: ''
+        userCode: ''
       },
       rules: {
         password: [
@@ -125,31 +143,42 @@ export default {
   },
   methods: {
     async sendVerifyCode () {
-      console.log('点击了')
-      console.log(this.model.username)
-      await this.$http.post('/getMailCode', { mail: this.model.username })
-      // 开始倒计时
-      this.codeSend = true
-      this.timeIntervalID = setInterval(() => {
-        this.countDown--
-        // 如果减到0 则清除定时器
-        if (this.countDown === 0) {
-          clearInterval(this.timeIntervalID)
-          this.codeSend = false
-          this.countDown = 60
-        }
-      }, 1000)
-    },
-    async submitForm (value) {
-      console.log(value)
-      if (value.password === '' || value.checkPass === '' || value.username === '') {
-        this.$message.error('请将信息填写完全哦')
+      if (this.model.username === '') {
+        this.$message.error('请填写邮箱/手机')
         return
       }
 
-      let data = await this.$http.post('rest/users', this.model)
-      console.log(data)
-      console.log('提交了')
+      // 根据用户名的类型调用验证码接口
+      // 用户名是邮箱
+      if (this.mail !== '') {
+        console.log('准备发邮件')
+        let { code } = await this.$http.post('/getMailCode', { mail: this.model.username })
+        if (code === 200) {
+          // 开始倒计时
+          this.codeSend = true
+          this.timeIntervalID = setInterval(() => {
+            this.countDown--
+            // 如果减到0 则清除定时器
+            if (this.countDown === 0) {
+              clearInterval(this.timeIntervalID)
+              this.codeSend = false
+              this.countDown = 60
+            }
+          }, 1000)
+        }
+        // 用户名是手机
+      } else if (this.phone !== '') {
+        let { code } = await this.$http.post('/getPhoneCode', { phone: this.model.username })
+      }
+    },
+    async submitForm (model) {
+      console.log(model)
+      if (model.password === '' || model.checkPass === '' || model.username === '') {
+        this.$message.error('请将信息填写完全哦')
+        return
+      }
+      await this.$http.post('/register', this.model)
+      console.log('提交了表单')
     }
   },
   beforeRouteLeave (to, from, next) {

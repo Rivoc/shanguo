@@ -10,6 +10,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 // import './utils/http.js'
+axios.defaults.withCredentials = true
 Vue.prototype.$http = axios.create({
   baseURL: 'http://localhost:3000/web/api'
 })
@@ -17,14 +18,32 @@ Vue.prototype.$http = axios.create({
 
 Vue.prototype.$http.interceptors.response.use(
 
-  response => {
-    console.log('拦截了')
-    Vue.prototype.$message.success(response.data.message)
-    return response.data
+  res => {
+    switch (res.data.code) {
+      case 200:
+        if (res.data.message) {
+          Vue.prototype.$message.success(res.data.message)
+          console.log(res)
+        }
+        break
+      case 201:
+        Vue.prototype.$message.error(res.data.message)
+        break
+    }
+    return res.data
   },
 
-  error => { // 默认除了2XX之外的都是错误的，就会走这里
-    return Promise.reject(error.response)
+  err => { // 默认除了2XX之外的都是错误的，就会走这里
+    console.log(err.response)
+    if (err && err.response) {
+      switch (err.response.status) {
+        case 400:
+          err.message = '错误请求'
+          console.log('阿啊')
+          break
+        default:
+      }
+    }
   }
 
 )

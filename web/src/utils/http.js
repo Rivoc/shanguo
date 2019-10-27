@@ -6,20 +6,20 @@ import router from '@/router/index'
 // })
 // 响应拦截器
 axios.interceptors.response.use(res => {
-  console.log('拦截了')
-  if (res.data.message) {
-    Vue.prototype.$message.success(res.data.message)
+  // console.log('拦截了')
+  // if (res.data.message) {
+  //   Vue.prototype.$message.success(res.data.message)
+  // }
+  // return res.data
+}, error => {
+  console.log('阿啊')
+  if (error && error.response) {
+    switch (error.response.status) {
+      case 400:
+        error.message = '错误请求'
+        console.log('阿啊')
+        break
+    }
   }
-  return res.data
-}, (err) => {
-  console.log(err.response.status)
-  Vue.prototype.$message.error('错了')
-  if (err.data.message) {
-    Vue.prototype.$message.error(err.data.message)
-  }
-  // 约定返回401就跳回登录页
-  if (err.response.status === 401) {
-    router.push('/login')
-  }
-  return Promise.reject(err)
+  return Promise.reject(error)
 })

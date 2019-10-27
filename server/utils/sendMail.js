@@ -9,12 +9,13 @@ const nodemailer = require('nodemailer');
 
 // 创建发送邮件的对象
 let transporter = nodemailer.createTransport({
-  host: 'smtp.qq.com',//发送方邮箱（例如qq) 通过模块文件夹下的lib/wellknown/services.json更改邮箱映射的域名
-  port: 587,//端口号
-  secure: false, // true for 465, false for other ports
+  host: 'smtp.163.com',//发送方邮箱（例如qq) 通过模块文件夹下的lib/wellknown/services.json更改邮箱映射的域名
+  port: 25,//端口号587
+  // secure: true,// true for 465, false for other ports
+  secureConnection: true,
   auth: {
-    user: '1074852904@qq.com', // 发送方的邮箱地址
-    pass: 'vhaqcvqkhawyfjfa' // mtp验证码
+    user: '17707457250@163.com', // 发送方的邮箱地址
+    pass: 'wyyx163' // mtp验证码
   }
   // });
 
@@ -34,15 +35,17 @@ let transporter = nodemailer.createTransport({
 
 function send (mail, code) {
   let info = {
-    from: '山果科技<renne.c@qq.com>', // sender address
+    from: '山果科技<17707457250@163.com>', // sender address
     to: mail, // list of receivers
     subject: '山果注册验证码', // Subject line
     text: `您的验证码是${code},有效期一分钟` // plain text body text,html二选一
   }
+  console.log(mail, code)
   return new Promise((resolve, reject) => {
     transporter.sendMail(info, (err, info) => {
       if (err) {
-        reject('发送失败')
+        console.log('发邮件出错' + err)
+        reject(err)
       } else {
         resolve(code)
       }
